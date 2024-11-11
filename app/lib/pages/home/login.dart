@@ -92,13 +92,21 @@ class _LoginFormState extends State<LoginForm> {
   bool loading = false;
 
   void onFormSubmitted(BuildContext context) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+
     if (_formKey.currentState?.validate() == false) return;
     _formKey.currentState?.save();
     var auth = Provider.of<AuthModel>(context, listen: false);
 
-    loading = true;
+    setState(() {
+      loading = true;
+    });
+
     var error = await auth.login(username, password);
-    loading = false;
+
+    setState(() {
+      loading = false;
+    });
 
     if (error == null) {
       context.go('/app');
@@ -152,11 +160,13 @@ class _LoginFormState extends State<LoginForm> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              onPressed: () => onFormSubmitted(context),
-              child: const Text(
-                'Kontynuuj',
-                style: TextStyle(fontSize: 17),
-              ),
+              onPressed: loading ? null : () => onFormSubmitted(context),
+              child: loading
+                  ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 3))
+                  : const Text(
+                      'Kontynuuj',
+                      style: TextStyle(fontSize: 17),
+                    ),
             ),
           ],
         ),

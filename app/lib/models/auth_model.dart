@@ -5,7 +5,7 @@ class AuthModel extends ChangeNotifier {
   bool localAccount = false;
 
   Future<String?> login(String username, String password) async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 3));
 
     if (username == 'admin' && password == 'admin') {
       loggedIn = true;
