@@ -11,60 +11,52 @@ class Home extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Column(
+      child: Stack(
         children: [
-          Stack(
-            children: [
-              SizedBox(height: height),
-              Positioned(
-                top: 0,
-                height: height - 350 + 40,
-                width: MediaQuery.of(context).size.width,
+          SizedBox(height: height),
+          Positioned(
+            top: 0,
+            height: height - 350 + 40,
+            width: MediaQuery.of(context).size.width,
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  opacity: 0.8,
+                  image: AssetImage('assets/bg.png'),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: height - 350,
+            height: 350,
+            width: MediaQuery.of(context).size.width,
+            child: RotationTransition(
+              turns: const AlwaysStoppedAnimation(180 / 360),
+              child: ClipPath(
+                clipper: Clipper(),
                 child: Container(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      opacity: 0.8,
-                      image: AssetImage('assets/bg.png'),
-                    ),
-                  ),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary),
                 ),
               ),
-              Positioned(
-                top: height - 350,
-                height: 350,
-                width: MediaQuery.of(context).size.width,
-                child: RotationTransition(
-                  turns: const AlwaysStoppedAnimation(180 / 360),
-                  child: ClipPath(
-                    clipper: Clipper(),
-                    child: Container(
-                      decoration: BoxDecoration(color: Theme.of(context).colorScheme.tertiary),
-                    ),
-                  ),
+            ),
+          ),
+          SafeArea(
+            child: Center(
+              child: Container(
+                width: MediaQuery.of(context).size.width / 1.1,
+                margin: const EdgeInsets.symmetric(vertical: 30),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ),
-              SafeArea(
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Transform.translate(
-                    offset: Offset(0, MediaQuery.of(context).size.height * 0.13),
-                    child: Center(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 1.1,
-                        margin: const EdgeInsets.symmetric(vertical: 30),
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.7),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children ?? []),
-                      ),
-                    ),
-                  ),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children ?? []),
                 ),
               ),
-            ],
+            ),
           ),
         ],
       ),
