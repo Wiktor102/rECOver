@@ -1,8 +1,10 @@
+import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recover/models/auth_model.dart';
 import 'package:recover/pages/app/app_home.dart';
+import 'package:recover/pages/home/home.dart';
 import 'package:recover/pages/home/login.dart';
 import 'package:recover/pages/home/signup.dart';
 
@@ -18,11 +20,7 @@ final _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      redirect: (BuildContext context, GoRouterState state) {
-        var auth = Provider.of<AuthModel>(context);
-        if (auth.loggedIn || auth.localAccount) return '/app';
-        return '/login';
-      },
+      builder: (context, state) => const AuthLoader(),
     ),
     GoRoute(
       path: '/login',
@@ -55,5 +53,39 @@ class MyApp extends StatelessWidget {
         routerConfig: _router,
       ),
     );
+  }
+}
+
+class AuthLoader extends StatefulWidget {
+  const AuthLoader({super.key});
+
+  @override
+  State<AuthLoader> createState() => _AuthLoaderState();
+}
+
+class _AuthLoaderState extends State<AuthLoader> {
+  @override
+  void initState() {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AuthModel>(context, listen: false).init().then((_) {
+        if (!context.mounted) return;
+        if (Provider.of<AuthModel>(context, listen: false).loggedIn) {
+          context.go('/app');
+        } else {
+          context.go('/login');
+        }
+      });
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Home(children: [
+      Center(
+        child: CircularProgressIndicator(),
+      )
+    ]);
   }
 }
