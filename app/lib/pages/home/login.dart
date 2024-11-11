@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:recover/common/custom_input_decoration.dart';
 import 'package:recover/pages/home/home.dart';
@@ -9,7 +10,7 @@ class LoginPage extends StatelessWidget {
   void onFormSubmitted(BuildContext context) async {}
 
   void goToSignup(BuildContext context) {
-    Navigator.of(context).pushReplacementNamed('/signup');
+    context.go('/signup');
   }
 
   @override
@@ -109,7 +110,9 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    print("hello");
+                  },
                   child: const Text(
                     'kontynuuj bez konta',
                     style: TextStyle(fontWeight: FontWeight.w500),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:recover/common/custom_input_decoration.dart';
 import 'package:recover/pages/home/home.dart';
 
@@ -9,9 +10,7 @@ class SignupPage extends StatelessWidget {
   void onFormSubmitted(BuildContext context) async {}
 
   void goToLogin(BuildContext context) {
-    print(Navigator.of(context).canPop());
-    Navigator.of(context).pushNamed("/login");
-    Navigator.of(context).pushNamed("/");
+    context.go('/');
   }
 
   @override
@@ -103,7 +102,7 @@ class SignupPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -111,21 +110,6 @@ class SignupPage extends StatelessWidget {
                   ),
                 ),
                 onPressed: () => goToLogin(context),
-                child: const Text(
-                  'Mam już konto',
-                  style: TextStyle(fontSize: 17),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                onPressed: () {},
                 child: const Text(
                   'Mam już konto',
                   style: TextStyle(fontSize: 17),
