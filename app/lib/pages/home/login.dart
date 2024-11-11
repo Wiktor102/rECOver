@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:recover/common/custom_input_decoration.dart';
+import 'package:recover/models/auth_model.dart';
 import 'package:recover/pages/home/home.dart';
 
 class LoginPage extends StatelessWidget {
@@ -8,6 +10,11 @@ class LoginPage extends StatelessWidget {
 
   void goToSignup(BuildContext context) {
     context.go('/signup');
+  }
+
+  void useLocalAccount(BuildContext context) {
+    Provider.of<AuthModel>(context, listen: false).useLocalAccount();
+    context.go('/app');
   }
 
   @override
@@ -52,13 +59,11 @@ class LoginPage extends StatelessWidget {
                 Text(
                   'lub ',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground.withOpacity(0.8),
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    print("hello");
-                  },
+                  onPressed: () => useLocalAccount(context),
                   child: const Text(
                     'kontynuuj bez konta',
                     style: TextStyle(fontWeight: FontWeight.w500),
@@ -84,11 +89,25 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   String username = "";
   String password = "";
+  bool loading = false;
 
   void onFormSubmitted(BuildContext context) async {
     if (_formKey.currentState?.validate() == false) return;
     _formKey.currentState?.save();
-    print(username + " " + password);
+    var auth = Provider.of<AuthModel>(context, listen: false);
+
+    loading = true;
+    var error = await auth.login(username, password);
+    loading = false;
+
+    if (error == null) {
+      context.go('/app');
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(error),
+    ));
   }
 
   @override
