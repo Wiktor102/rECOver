@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recover/models/auth_model.dart';
+import 'package:recover/pages/app/app_home.dart';
 import 'package:recover/pages/home/login.dart';
 import 'package:recover/pages/home/signup.dart';
 
@@ -33,7 +34,7 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/app',
-      builder: (context, state) => const Placeholder(),
+      builder: (context, state) => const AppHome(),
     ),
   ],
 );
@@ -41,7 +42,6 @@ final _router = GoRouter(
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
