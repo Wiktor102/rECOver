@@ -4,10 +4,7 @@ import 'package:recover/common/custom_input_decoration.dart';
 import 'package:recover/pages/home/home.dart';
 
 class LoginPage extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
-
-  LoginPage({super.key});
-  void onFormSubmitted(BuildContext context) async {}
+  const LoginPage({super.key});
 
   void goToSignup(BuildContext context) {
     context.go('/signup');
@@ -33,58 +30,7 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
-            AutofillGroup(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    TextFormField(
-                      autofillHints: const [AutofillHints.email],
-                      //   onSaved: (v) => email = v ?? "",
-                      onSaved: (v) => {},
-                      decoration: CustomInputDecoration(
-                        context,
-                        labelText: "Nazwa użytkownika lub e-mail",
-                        hintText: '',
-                        prefixIcon: Icons.person,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    TextFormField(
-                      autofillHints: const [AutofillHints.password],
-                      obscureText: true,
-                      obscuringCharacter: '*',
-                      //   onSaved: (v) => password = v ?? "",
-                      onSaved: (v) => {},
-                      decoration: CustomInputDecoration(
-                        context,
-                        labelText: "Hasło",
-                        hintText: 'Wpisz swoje hasło',
-                        prefixIcon: Icons.lock,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    FilledButton(
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      onPressed: () => onFormSubmitted(context),
-                      child: const Text(
-                        'Kontynuuj',
-                        style: TextStyle(fontSize: 17),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            const LoginForm(),
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: OutlinedButton(
@@ -119,6 +65,79 @@ class LoginPage extends StatelessWidget {
                   ),
                 )
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
+
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  final _formKey = GlobalKey<FormState>();
+  String username = "";
+  String password = "";
+
+  void onFormSubmitted(BuildContext context) async {
+    if (_formKey.currentState?.validate() == false) return;
+    _formKey.currentState?.save();
+    print(username + " " + password);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AutofillGroup(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextFormField(
+              autofillHints: const [AutofillHints.email],
+              onSaved: (v) => username = v ?? "",
+              decoration: CustomInputDecoration(
+                context,
+                labelText: "Nazwa użytkownika lub e-mail",
+                hintText: '',
+                prefixIcon: Icons.person,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            TextFormField(
+              autofillHints: const [AutofillHints.password],
+              obscureText: true,
+              obscuringCharacter: '*',
+              onSaved: (v) => password = v ?? "",
+              decoration: CustomInputDecoration(
+                context,
+                labelText: "Hasło",
+                hintText: 'Wpisz swoje hasło',
+                prefixIcon: Icons.lock,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              onPressed: () => onFormSubmitted(context),
+              child: const Text(
+                'Kontynuuj',
+                style: TextStyle(fontSize: 17),
+              ),
             ),
           ],
         ),
