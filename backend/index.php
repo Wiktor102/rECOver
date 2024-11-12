@@ -1,14 +1,15 @@
 <?php
-
 // Piszę to PHP w formie REST api
 // wszystkie zapytania będą kierowane do tego samego pliku (index.php)
 // i w zależności od ścieżki będą wywoływane różne funkcje
 // Czyli np do zalogowania będzie ścieżka /auth/login
 
 require_once './vendor/autoload.php';
+require_once "./router.php";
 require_once "./auth/verifyJWT.php";
 require_once "./connect.php";
 
+$path = @$_SERVER["PATH_INFO"];
 // Sprawdzamy poprawność tokenu tylko jeśli nie jesteśmy w ścieżce /auth (no bo jeżeli logujemy to nie ma jeszcze tokenu)
 if (!str_contains($path, "auth")) {
     $credentials = verifyJWT();

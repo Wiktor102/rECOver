@@ -1,12 +1,12 @@
 <?php
 $router->addRoute("POST", "/auth/login", function () {
-    require_once "./logIn.php";
+    require_once __DIR__ . "./logIn.php";
 });
 
 $router->addRoute("GET", "/auth/logout", function () {
-    require_once "./logOut.php";
+    require_once __DIR__ . "/logOut.php";
 });
 
 $router->addRoute("POST", "/auth/signup", function () {
-    require_once "./signUp.php";
+    require_once __DIR__ . "./signUp.php";
 });
