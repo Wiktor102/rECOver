@@ -1,12 +1,11 @@
 <?php
-session_start();
 use Firebase\JWT\JWT;
-require_once "./generateAccessToken.php";
+require_once __DIR__ . "/generateAccessToken.php";
 
 function getUserData($username) {
     $conn = connect();
     $stmt = $conn->stmt_init();
-    $sql = "SELECT * FROM `user` WHERE (`email` = ? OR `nick` = ?);";
+    $sql = "SELECT * FROM `users` WHERE (`email` = ? OR `nick` = ?);";
 
     try {
         $stmt->prepare($sql);
@@ -21,6 +20,7 @@ function getUserData($username) {
 
         return $result->fetch_assoc();
     } catch (Exception $e) {
+        error_log($e->getMessage());
         http_response_code(500);
         exit();
     } finally {
@@ -35,7 +35,7 @@ function generateRefreshToken($userId){
         "exp" => time() + 30 * 24 * 60 * 60, // 30 days expiration
     ];
 
-    $jwtSecretKey = file_get_contents("./.refresh-secret");
+    $jwtSecretKey = file_get_contents(realpath(dirname(__FILE__) . "/.refresh-secret"));
     $refreshToken = JWT::encode($refreshTokenPayload, $jwtSecretKey, "HS256");
     saveRefreshToken($userId, $refreshToken);
     return $refreshToken;
@@ -44,7 +44,7 @@ function generateRefreshToken($userId){
 function saveRefreshToken($userId, $refreshToken){
     $conn = connect();
     $stmt = $conn->stmt_init();
-    $sql = "UPDATE `user` SET `refreshToken` = ? WHERE `id` = ?;";
+    $sql = "UPDATE `users` SET `refreshToken` = ? WHERE `id` = ?;";
 
     try {
         $stmt->prepare($sql);
@@ -64,7 +64,7 @@ if (!isset($inputJson)) {
     exit();
 }
 
-$mail = $inputJson["mail"];
+$mail = $inputJson["username"];
 $userData = getUserData($mail);
 
 $correctPasswordHash = $userData["password"];

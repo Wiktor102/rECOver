@@ -5,7 +5,7 @@
 function createUser($mail, $username, $passwordHash){
 	$conn = connect();
 	$stmt = $conn->stmt_init();
-	$sql = "INSERT INTO `user` (`email`, `nick`, `password`)  VALUES (?, ?, ?);";
+	$sql = "INSERT INTO `users` (`email`, `nick`, `password`)  VALUES (?, ?, ?);";
 
     try {
         $stmt->prepare($sql);

@@ -5,7 +5,7 @@ $userId = $credentials["userId"];
 
 $conn = connect();
 $stmt = $conn->stmt_init();
-$sql = "UPDATE `user` SET `refreshToken` = NULL WHERE `id` = ?";
+$sql = "UPDATE `users` SET `refreshToken` = NULL WHERE `id` = ?";
 
 try {
     $stmt->prepare($sql);

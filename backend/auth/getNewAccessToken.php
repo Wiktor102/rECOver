@@ -1,10 +1,7 @@
 <?php
-session_start();
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-require_once realpath(dirname(__FILE__) . "/../vendor/autoload.php");
-require_once "../connect.php";
-require_once "./generateAccessToken.php";
+require_once __DIR__ . "/generateAccessToken.php";
 
 $headers = getallheaders();
 if (!array_key_exists("Authorization", $headers) && !array_key_exists("authorization", $headers)) {
@@ -27,7 +24,7 @@ try {
 
 	$userData = [
 		"id" => $decodedRefreshToken->sub,
-		"username" => $correctUserInfo["username"],
+		"username" => $correctUserInfo["nick"],
 		"email" => $correctUserInfo["email"],
 	];
 
@@ -40,7 +37,7 @@ try {
 function getUserRefreshToken($userId) {
 	$conn = connect();
 	$stmt = $conn->stmt_init();
-	$sql = "SELECT * FROM `user` WHERE `id` = ?;";
+	$sql = "SELECT * FROM `users` WHERE `id` = ?;";
 
 	if (!$stmt->prepare($sql)) {
 		$msg = json_encode(

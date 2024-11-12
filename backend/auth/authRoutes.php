@@ -1,6 +1,11 @@
 <?php
 $router->addRoute("POST", "/auth/login", function () {
-    require_once __DIR__ . "./logIn.php";
+    global $inputJson;
+    require_once __DIR__ . "/logIn.php";
+});
+
+$router->addRoute("GET", "/auth/refreshToken", function () {
+    require_once __DIR__ . "/getNewAccessToken.php";
 });
 
 $router->addRoute("GET", "/auth/logout", function () {
@@ -8,5 +13,6 @@ $router->addRoute("GET", "/auth/logout", function () {
 });
 
 $router->addRoute("POST", "/auth/signup", function () {
+    global $inputJson;
     require_once __DIR__ . "./signUp.php";
 });

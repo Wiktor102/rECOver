@@ -16,7 +16,7 @@ if (!str_contains($path, "auth")) {
 }
 
 $input = file_get_contents("php://input");
-if ($input !== "" && @$_SERVER["CONTENT_TYPE"] === "application/json") {
+if ($input !== "" && str_contains(@$_SERVER["CONTENT_TYPE"], "application/json")) {
     $inputJson = json_decode($input, true);
 
     if ($inputJson == null) {
@@ -24,7 +24,6 @@ if ($input !== "" && @$_SERVER["CONTENT_TYPE"] === "application/json") {
         exit();
     }
 }
-
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
