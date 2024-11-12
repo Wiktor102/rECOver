@@ -1,7 +1,11 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:recover/common/custom_input_decoration.dart';
 import 'package:recover/pages/home/home.dart';
+import 'package:http/http.dart' as http;
 
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
@@ -66,6 +70,7 @@ class _SignupFormState extends State<SignupForm> {
   String nick = '';
   String password = '';
   String repeatPassword = '';
+  bool loading = false;
 
   String? validateEmail(value) {
     if (value == null || value.isEmpty) {
@@ -102,8 +107,63 @@ class _SignupFormState extends State<SignupForm> {
   }
 
   void onFormSubmitted(BuildContext context) async {
-    if (widget._formKey.currentState?.validate() == false) return;
     widget._formKey.currentState?.save();
+    if (widget._formKey.currentState?.validate() == false) return;
+
+    setState(() {
+      loading = true;
+    });
+
+    final String body = json.encode({
+      "mail": email,
+      "username": nick,
+      "password": password,
+      "password2": repeatPassword,
+      "terms": true, // akceptacja regulaminu
+      "privacy": true // akceptacja polityki prywatności
+    });
+
+    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/auth/signup");
+    if (!kReleaseMode) {
+      uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/auth/signup");
+    }
+
+    try {
+      final http.Response response =
+          await http.post(uri, body: body, headers: {"Content-Type": "application/json"});
+      dynamic decodedResponse;
+
+      try {
+        decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
+      } catch (e) {
+        throw Exception();
+      }
+
+      if (response.statusCode == 400 || response.statusCode == 409) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Nazwa użytkownika jest już zajęta lub istnieje konto powiązane z tym adresem e-mail."),
+        ));
+        return;
+      }
+
+      if (response.statusCode != 200) {
+        throw Exception(decodedResponse.error);
+      }
+
+      context.go('/login');
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Rejestracja pomyślna. Teraz możesz sie zalogować."),
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Wystąpił nieznany błąd. Przepraszamy. Proszę spróbować później."),
+      ));
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   @override

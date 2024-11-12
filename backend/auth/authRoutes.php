@@ -14,5 +14,5 @@ $router->addRoute("GET", "/auth/logout", function () {
 
 $router->addRoute("POST", "/auth/signup", function () {
     global $inputJson;
-    require_once __DIR__ . "./signUp.php";
+    require_once __DIR__ . "/signUp.php";
 });

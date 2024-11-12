@@ -160,8 +160,8 @@ if (!isset($inputJson)) {
 verify($inputJson);
 
 $passwordHash = password_hash($inputJson["password"], PASSWORD_DEFAULT);
-createUser($inputJson["mail"], $inputJson["username"], $passwordHash);
+$uId = createUser($inputJson["mail"], $inputJson["username"], $passwordHash);
 
 http_response_code(200);
 header("Content-Type: application/json");
-exit(json_encode(["userId" => $_SESSION["userId"]]));
+exit(json_encode(["userId" => $uId]));
