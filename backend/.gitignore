@@ -1,0 +1,5 @@
+vendor/
+
+connect.php
+.refresh-secret
+.jwt-secret

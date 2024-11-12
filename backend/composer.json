@@ -1,0 +1,15 @@
+{
+    "name": "recover/api",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Wiktor Golicz"
+        },
+        {
+            "name": "Maksymilian Gruszka"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^6.5"
+    }
+}

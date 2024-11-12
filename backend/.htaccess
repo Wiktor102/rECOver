@@ -1,0 +1,20 @@
+RewriteEngine On
+
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^fridge.php$ fridge.php/$1 [L]
+
+<Files ~ "\.jwt-secret$">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files ~ "\.refresh-secret$">
+    Order allow,deny
+    Deny from all
+</Files>
