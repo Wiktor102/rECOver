@@ -14,7 +14,7 @@ class LoginPage extends StatelessWidget {
 
   void useLocalAccount(BuildContext context) {
     Provider.of<AuthModel>(context, listen: false).useLocalAccount();
-    context.go('/app'); // TODO: Redirect to the welcome page
+    context.go('/app');
   }
 
   @override
@@ -110,7 +110,7 @@ class _LoginFormState extends State<LoginForm> {
 
     if (!context.mounted) return;
     if (error == null) {
-      context.go(auth.user!.tags == null ? '/app/welcome' : '/app');
+      context.go('/app');
       return;
     }
 

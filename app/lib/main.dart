@@ -3,11 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recover/models/auth_model.dart';
+import 'package:recover/models/user_data_model.dart';
 import 'package:recover/pages/app/app_home.dart';
 import 'package:recover/pages/home/home.dart';
 import 'package:recover/pages/home/login.dart';
 import 'package:recover/pages/home/signup.dart';
-import 'package:recover/pages/welcome/welcome.dart';
+import 'package:recover/pages/app/welcome/welcome.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,11 +34,17 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/app',
-      builder: (context, state) => const AppHome(),
-    ),
-    GoRoute(
-      path: '/app/welcome',
-      builder: (context, state) => const WelcomePage(),
+      builder: (context, state) => ChangeNotifierProxyProvider<AuthModel, UserDataModel>(
+        create: (context) => UserDataModel(Provider.of<AuthModel>(context, listen: false)),
+        update: (context, authModel, prev) => prev!..update(authModel),
+        child: const AppHome(),
+      ),
+      routes: [
+        GoRoute(
+          path: 'welcome',
+          builder: (context, state) => const WelcomePage(),
+        ),
+      ],
     ),
   ],
 );
@@ -77,7 +84,7 @@ class _AuthLoaderState extends State<AuthLoader> {
 
         var auth = Provider.of<AuthModel>(context, listen: false);
         if (auth.loggedIn) {
-          context.go(auth.user!.tags == null ? '/app/welcome' : '/app');
+          context.go('/app');
         } else {
           context.go('/login');
         }
