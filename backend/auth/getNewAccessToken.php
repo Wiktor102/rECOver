@@ -24,7 +24,7 @@ try {
 
 	$userData = [
 		"id" => $decodedRefreshToken->sub,
-		"username" => $correctUserInfo["nick"],
+		"nick" => $correctUserInfo["nick"],
 		"email" => $correctUserInfo["email"],
 	];
 
@@ -39,39 +39,19 @@ function getUserRefreshToken($userId) {
 	$stmt = $conn->stmt_init();
 	$sql = "SELECT * FROM `users` WHERE `id` = ?;";
 
-	if (!$stmt->prepare($sql)) {
-		$msg = json_encode(
-			[
-				"error" => $stmt->error,
-				"errorNumber" => $stmt->errno,
-				"type" => "sqlError",
-			],
-			JSON_UNESCAPED_UNICODE
-		);
-		http_response_code(500);
-		exit($msg);
-	}
-
-	$stmt->bind_param("i", $userId);
-
-	if (!$stmt->execute()) {
-		$msg = json_encode(
-			[
-				"error" => $conn->error,
-				"errorCode" => $conn->errno,
-				"type" => "dbError",
-			],
-			JSON_UNESCAPED_UNICODE
-		);
-		http_response_code(500);
-		exit($msg);
-	}
-
-	$result = $stmt->get_result();
-
-	if ($result->num_rows == 0) {
-		return null;
-	}
+    try {
+        $stmt->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows == 0) return null;
+    } catch (Exception $e) {
+        http_response_code(500);
+        exit(json_encode(["error" => $e->getMessage()]));
+    } finally {
+        $stmt->close();
+        $conn->close();
+    }
 
 	return $result->fetch_assoc();
 }
