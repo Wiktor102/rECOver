@@ -30,5 +30,6 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $router = new Router();
 
 require_once "./auth/authRoutes.php";
+require_once "./user/userRoutes.php";
 
 $router->handleRequest($_SERVER["REQUEST_METHOD"], $path);
