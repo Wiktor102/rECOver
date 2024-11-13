@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:recover/models/auth_model.dart';
 import 'package:http/http.dart' as http;
 
-class UserDataModel extends ChangeNotifier {
+abstract class UserDataModel extends ChangeNotifier {
   int mainStreak = 0;
   int points = 0;
   List<String>? tags;
@@ -33,16 +33,27 @@ class UserDataModel extends ChangeNotifier {
       return;
     }
 
-    if (authModel.localAccount) {
-      loadingFuture = _loadLocalUserData();
-    } else {
-      loadingFuture = _fetchUserData();
-    }
-
+    loadingFuture = _loadUserData();
     notifyListeners();
   }
 
-  Future<void> _fetchUserData() async {
+  Future<void> _loadUserData();
+  Future<void> updateTags(List<String> newTags);
+
+  factory UserDataModel.create(AuthModel authModel) {
+    if (authModel.localAccount) {
+      return LocalUserDataModel._(authModel);
+    } else {
+      return OnlineUserDataModel._(authModel);
+    }
+  }
+}
+
+class OnlineUserDataModel extends UserDataModel {
+  OnlineUserDataModel._(super.authModel);
+
+  @override
+  Future<void> _loadUserData() async {
     Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/user");
     if (!kReleaseMode) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/user");
@@ -67,11 +78,50 @@ class UserDataModel extends ChangeNotifier {
     }
   }
 
-  Future<void> _loadLocalUserData() async {
+  @override
+  Future<void> updateTags(List<String> newTags) async {
+    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/user");
+    if (!kReleaseMode) {
+      uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/user");
+    }
+
+    final String body = json.encode({
+      "tags": newTags,
+    });
+
+    try {
+      final http.Response response = await http.patch(uri, body: body, headers: {
+        "Authorization": "Bearer ${authModel.accessToken}",
+        "Content-Type": "application/json",
+      });
+      print(response.body);
+      if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
+
+      tags = newTags;
+    } catch (e) {
+      print(e);
+      throw Exception(e);
+    } finally {
+      notifyListeners();
+    }
+  }
+}
+
+class LocalUserDataModel extends UserDataModel {
+  LocalUserDataModel._(super.authModel);
+
+  @override
+  Future<void> _loadUserData() async {
     try {} catch (e) {
       throw Exception(e);
     } finally {
       notifyListeners();
     }
+  }
+
+  @override
+  Future<void> updateTags(List<String> newTags) {
+    // TODO: implement updateTags
+    throw UnimplementedError();
   }
 }
