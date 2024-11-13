@@ -18,7 +18,18 @@ $router->addRoute("GET", "/user", function () {
             return;
         }
 
-        exit(json_encode($result->fetch_assoc()));
+        $row = $result->fetch_assoc();
+
+        exit(json_encode([
+            "id" => $row["id"],
+            "email" => $row["email"],
+            "nick" => $row["nick"],
+            "mainStreak" => $row["mainStreak"],
+            "points" => $row["points"],
+            "tags" => json_decode($row["tags"]),
+            "streaks" => json_decode($row["streaks"]),
+            "quizQuestions" => json_decode($row["quizQuestions"])
+        ]));
     } catch (Exception $e) {
         echo json_encode(["error" => $e->getMessage()]);
     } finally {

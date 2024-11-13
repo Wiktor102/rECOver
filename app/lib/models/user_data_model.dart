@@ -67,7 +67,7 @@ class OnlineUserDataModel extends UserDataModel {
       Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       mainStreak = data["mainStreak"];
       points = data["points"];
-      tags = data["tags"];
+      tags = List<String>.from(data["tags"]);
 
       print(response.body);
     } catch (e) {
