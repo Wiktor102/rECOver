@@ -7,6 +7,7 @@ import 'package:recover/pages/app/app_home.dart';
 import 'package:recover/pages/home/home.dart';
 import 'package:recover/pages/home/login.dart';
 import 'package:recover/pages/home/signup.dart';
+import 'package:recover/pages/welcome/welcome.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +34,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/app',
       builder: (context, state) => const AppHome(),
+    ),
+    GoRoute(
+      path: '/app/welcome',
+      builder: (context, state) => const WelcomePage(),
     ),
   ],
 );
@@ -69,8 +74,10 @@ class _AuthLoaderState extends State<AuthLoader> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       Provider.of<AuthModel>(context, listen: false).init().then((_) {
         if (!context.mounted) return;
-        if (Provider.of<AuthModel>(context, listen: false).loggedIn) {
-          context.go('/app');
+
+        var auth = Provider.of<AuthModel>(context, listen: false);
+        if (auth.loggedIn) {
+          context.go(auth.user!.tags == null ? '/app/welcome' : '/app');
         } else {
           context.go('/login');
         }

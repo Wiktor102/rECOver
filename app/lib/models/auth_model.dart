@@ -25,10 +25,10 @@ class AuthModel extends ChangeNotifier {
       if (newAccessToken != null) {
         final Map<String, dynamic> decodedJWT = Jwt.parseJwt(newAccessToken);
         user = User(
-          decodedJWT["sub"],
-          decodedJWT["email"],
-          decodedJWT["preferred_username"],
-          newAccessToken,
+          id: decodedJWT["sub"],
+          email: decodedJWT["email"],
+          nickname: decodedJWT["preferred_username"],
+          accessToken: newAccessToken,
         );
       }
 
@@ -74,10 +74,10 @@ class AuthModel extends ChangeNotifier {
 
         final Map<String, dynamic> decodedJWT = Jwt.parseJwt(accessToken);
         user = User(
-          decodedJWT["sub"],
-          decodedJWT["email"],
-          decodedJWT["preferred_username"],
-          accessToken,
+          id: decodedJWT["sub"],
+          email: decodedJWT["email"],
+          nickname: decodedJWT["preferred_username"],
+          accessToken: accessToken,
         );
 
         await _saveRefreshToken(refreshToken);

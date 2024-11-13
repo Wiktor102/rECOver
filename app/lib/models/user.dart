@@ -3,8 +3,15 @@ class User {
   final String email;
   final String nickname;
   final String accessToken;
+  List<String>? tags;
 
-  User(this.id, this.email, this.nickname, this.accessToken);
+  User({
+    required this.id,
+    required this.email,
+    required this.nickname,
+    required this.accessToken,
+    this.tags,
+  });
 
 //   factory User.fromJson(Map<String, dynamic> json) {
 //     return User(

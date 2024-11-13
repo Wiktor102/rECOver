@@ -14,7 +14,7 @@ class LoginPage extends StatelessWidget {
 
   void useLocalAccount(BuildContext context) {
     Provider.of<AuthModel>(context, listen: false).useLocalAccount();
-    context.go('/app');
+    context.go('/app'); // TODO: Redirect to the welcome page
   }
 
   @override
@@ -96,20 +96,21 @@ class _LoginFormState extends State<LoginForm> {
 
     if (_formKey.currentState?.validate() == false) return;
     _formKey.currentState?.save();
-    var auth = Provider.of<AuthModel>(context, listen: false);
 
     setState(() {
       loading = true;
     });
 
+    var auth = Provider.of<AuthModel>(context, listen: false);
     var error = await auth.login(username, password);
 
     setState(() {
       loading = false;
     });
 
+    if (!context.mounted) return;
     if (error == null) {
-      context.go('/app');
+      context.go(auth.user!.tags == null ? '/app/welcome' : '/app');
       return;
     }
 
