@@ -13,7 +13,7 @@ class UserDataModel extends ChangeNotifier {
 
   AuthModel authModel;
   void update(newAuthModel) {
-    if (authModel.user?.id == authModel.user?.id) {
+    if (authModel.accessToken == authModel.accessToken) {
       authModel = newAuthModel; // Update this anyway but do not fetch
       return;
     }
@@ -50,7 +50,7 @@ class UserDataModel extends ChangeNotifier {
 
     try {
       final http.Response response =
-          await http.get(uri, headers: {"Authorization": "Bearer ${authModel.user!.accessToken}"});
+          await http.get(uri, headers: {"Authorization": "Bearer ${authModel.accessToken}"});
       if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
 
       Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;

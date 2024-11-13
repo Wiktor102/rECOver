@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decode/jwt_decode.dart';
-import 'package:recover/models/user.dart';
 import 'dart:io';
 
 const secureStorage = FlutterSecureStorage();
@@ -12,8 +11,10 @@ class AuthModel extends ChangeNotifier {
   bool localAccount = false;
   bool initialized = false;
 
-  User? user;
-  bool get loggedIn => user != null || localAccount;
+  String username = "";
+  String? accessToken;
+
+  bool get loggedIn => accessToken != null || localAccount;
 
   Future<void> init() async {
     if (initialized) throw Exception("AuthModel is already initialized");
@@ -24,12 +25,8 @@ class AuthModel extends ChangeNotifier {
       var newAccessToken = await _refreshAccessToken(refreshToken);
       if (newAccessToken != null) {
         final Map<String, dynamic> decodedJWT = Jwt.parseJwt(newAccessToken);
-        user = User(
-          id: decodedJWT["sub"],
-          email: decodedJWT["email"],
-          nickname: decodedJWT["preferred_username"],
-          accessToken: newAccessToken,
-        );
+        accessToken = newAccessToken;
+        username = decodedJWT["preferred_username"];
       }
 
       initialized = true;
@@ -69,16 +66,12 @@ class AuthModel extends ChangeNotifier {
           throw Exception(response.body);
         }
 
-        String accessToken = decodedResponse["accessToken"]["token"];
+        String newAccessToken = decodedResponse["accessToken"]["token"];
         String refreshToken = decodedResponse["refreshToken"];
 
-        final Map<String, dynamic> decodedJWT = Jwt.parseJwt(accessToken);
-        user = User(
-          id: decodedJWT["sub"],
-          email: decodedJWT["email"],
-          nickname: decodedJWT["preferred_username"],
-          accessToken: accessToken,
-        );
+        final Map<String, dynamic> decodedJWT = Jwt.parseJwt(newAccessToken);
+        username = decodedJWT["preferred_username"];
+        accessToken = newAccessToken;
 
         await _saveRefreshToken(refreshToken);
       }
@@ -98,7 +91,7 @@ class AuthModel extends ChangeNotifier {
   }
 
   void logout() {
-    user = null;
+    accessToken = null;
     notifyListeners();
   }
 
