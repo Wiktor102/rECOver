@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recover/models/user_data_model.dart';
 import 'package:recover/pages/app/navigation_bar.dart';
+import 'package:recover/pages/app/records/records.dart';
 import 'package:recover/pages/app/top_bar.dart';
 
 class AppHome extends StatefulWidget {
@@ -17,7 +18,7 @@ class _AppHomeState extends State<AppHome> {
 
   final PageController _controller = PageController();
   static const List<Widget> _pages = <Widget>[
-    Center(child: Text('Home Page')),
+    Center(child: Records()),
     Center(child: Text('Search Page')),
     Center(child: Text('Notifications Page')),
     Center(child: Text('Profile Page')),
