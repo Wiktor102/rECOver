@@ -15,6 +15,7 @@ class AppHome extends StatefulWidget {
 class _AppHomeState extends State<AppHome> {
   int _selectedIndex = 0;
 
+  final PageController _controller = PageController();
   static const List<Widget> _pages = <Widget>[
     Center(child: Text('Home Page')),
     Center(child: Text('Search Page')),
@@ -25,6 +26,11 @@ class _AppHomeState extends State<AppHome> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _controller.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     });
   }
 
@@ -58,7 +64,11 @@ class _AppHomeState extends State<AppHome> {
           selectedIndex: _selectedIndex,
           onItemTapped: _onItemTapped,
         ),
-        body: _pages.elementAt(_selectedIndex),
+        body: PageView(
+          controller: _controller,
+          physics: const NeverScrollableScrollPhysics(),
+          children: _pages,
+        ),
       ),
     );
   }
