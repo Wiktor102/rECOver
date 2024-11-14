@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:recover/models/user_data_model.dart';
 import 'package:recover/pages/app/navigation_bar.dart';
 import 'package:recover/pages/app/records/records.dart';
+import 'package:recover/pages/app/settings/settings.dart';
 import 'package:recover/pages/app/top_bar.dart';
 
 class AppHome extends StatefulWidget {
@@ -18,10 +19,10 @@ class _AppHomeState extends State<AppHome> {
 
   final PageController _controller = PageController();
   static const List<Widget> _pages = <Widget>[
-    Center(child: Records()),
+    Center(child: SingleChildScrollView(child: RecordsPage())),
     Center(child: Text('Search Page')),
     Center(child: Text('Notifications Page')),
-    Center(child: Text('Profile Page')),
+    Center(child: Settings()),
   ];
 
   void _onItemTapped(int index) {
@@ -65,10 +66,13 @@ class _AppHomeState extends State<AppHome> {
           selectedIndex: _selectedIndex,
           onItemTapped: _onItemTapped,
         ),
-        body: PageView(
-          controller: _controller,
-          physics: const NeverScrollableScrollPhysics(),
-          children: _pages,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+          child: PageView(
+            controller: _controller,
+            physics: const NeverScrollableScrollPhysics(),
+            children: _pages,
+          ),
         ),
       ),
     );

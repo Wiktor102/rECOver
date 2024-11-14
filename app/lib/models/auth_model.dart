@@ -22,13 +22,7 @@ class AuthModel extends ChangeNotifier {
 
     String? refreshToken = await _getRefreshToken();
     if (refreshToken != null) {
-      var newAccessToken = await _refreshAccessToken(refreshToken);
-      if (newAccessToken != null) {
-        final Map<String, dynamic> decodedJWT = Jwt.parseJwt(newAccessToken);
-        accessToken = newAccessToken;
-        username = decodedJWT["preferred_username"];
-      }
-
+      await refreshAccessToken(refreshToken);
       initialized = true;
       notifyListeners();
     }
@@ -111,7 +105,9 @@ class AuthModel extends ChangeNotifier {
     return jwt;
   }
 
-  Future<String?> _refreshAccessToken(String refreshToken) async {
+  Future<void> refreshAccessToken(String? refreshToken) async {
+    refreshToken ??= await _getRefreshToken();
+
     Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/auth/refreshToken");
     if (!kReleaseMode) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/auth/refreshToken");
@@ -138,11 +134,15 @@ class AuthModel extends ChangeNotifier {
         throw Exception("#${response.statusCode}: $decodedResponse");
       }
 
-      return decodedResponse["token"];
+      if (decodedResponse["token"] != null) {
+        final Map<String, dynamic> decodedJWT = Jwt.parseJwt(decodedResponse["token"]);
+        accessToken = decodedResponse["token"];
+        username = decodedJWT["preferred_username"];
+        notifyListeners();
+      }
     } catch (e, s) {
       print(e);
       print(s);
-      return null;
     }
   }
 }

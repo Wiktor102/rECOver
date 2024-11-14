@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:provider/provider.dart';
+import 'package:recover/models/user_data_model.dart';
+import 'dart:async';
 
 class TransportSurvey extends StatefulWidget {
   const TransportSurvey({super.key});
@@ -10,6 +13,22 @@ class TransportSurvey extends StatefulWidget {
 
 class _TransportSurveyState extends State<TransportSurvey> {
   List<String> _selected = [];
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    setState(() {
+      _selected = Provider.of<UserDataModel>(context, listen: false).todayRecords.usedTransport;
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
 
   void _toggleCheckbox(String id) {
     setState(() {
@@ -18,6 +37,11 @@ class _TransportSurveyState extends State<TransportSurvey> {
       } else {
         _selected.add(id);
       }
+
+      if (_debounce?.isActive ?? false) _debounce?.cancel();
+      _debounce = Timer(const Duration(milliseconds: 1500), () {
+        Provider.of<UserDataModel>(context, listen: false).saveRecords(_selected, null);
+      });
     });
   }
 
@@ -31,6 +55,7 @@ class _TransportSurveyState extends State<TransportSurvey> {
             Text("Jakich środków transportu dzisiaj używałeś?", style: Theme.of(context).textTheme.bodyLarge),
             const SizedBox(height: 16),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _TransportSurveyItem(
                   id: "walk",
@@ -56,6 +81,7 @@ class _TransportSurveyState extends State<TransportSurvey> {
             ),
             const SizedBox(height: 8),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _TransportSurveyItem(
                   id: "bus",
