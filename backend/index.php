@@ -31,5 +31,6 @@ $router = new Router();
 
 require_once "./auth/authRoutes.php";
 require_once "./user/userRoutes.php";
+require_once "./records/records.php";
 
 $router->handleRequest($_SERVER["REQUEST_METHOD"], $path);
