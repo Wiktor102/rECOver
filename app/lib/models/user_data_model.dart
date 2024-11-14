@@ -5,6 +5,7 @@ import 'package:recover/models/auth_model.dart';
 import 'package:http/http.dart' as http;
 
 abstract class UserDataModel extends ChangeNotifier {
+  late String username;
   int mainStreak = 0;
   int points = 0;
   List<String>? tags;
@@ -65,6 +66,7 @@ class OnlineUserDataModel extends UserDataModel {
       if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
 
       Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      username = data["nick"];
       mainStreak = data["mainStreak"];
       points = data["points"];
       tags = List<String>.from(data["tags"]);

@@ -33,21 +33,22 @@ final _router = GoRouter(
       builder: (context, state) => const SignupPage(),
     ),
     ShellRoute(
-        builder: (context, state, child) => ChangeNotifierProxyProvider<AuthModel, UserDataModel>(
-              create: (context) => UserDataModel.create(Provider.of<AuthModel>(context, listen: false)),
-              update: (context, authModel, prev) => prev!..update(authModel),
-              child: child,
-            ),
-        routes: [
-          GoRoute(
-            path: '/app',
-            builder: (context, state) => const AppHome(),
-          ),
-          GoRoute(
-            path: '/app/welcome',
-            builder: (context, state) => const WelcomePage(),
-          ),
-        ])
+      builder: (context, state, child) => ChangeNotifierProxyProvider<AuthModel, UserDataModel>(
+        create: (context) => UserDataModel.create(Provider.of<AuthModel>(context, listen: false)),
+        update: (context, authModel, prev) => prev!..update(authModel),
+        child: child,
+      ),
+      routes: [
+        GoRoute(
+          path: '/app',
+          builder: (context, state) => const AppHome(),
+        ),
+        GoRoute(
+          path: '/app/welcome',
+          builder: (context, state) => const WelcomePage(),
+        ),
+      ],
+    )
   ],
 );
 
