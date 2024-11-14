@@ -10,7 +10,13 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     var userData = Provider.of<UserDataModel>(context);
     return AppBar(
-      title: Text(userData.username),
+      title: Row(
+        children: [
+          Icon(Symbols.account_circle, fill: 1, color: Theme.of(context).colorScheme.primary),
+          const SizedBox(width: 8),
+          Text(userData.username),
+        ],
+      ),
       actions: [
         _TopAppBarIndicator(
           icon: Icon(
