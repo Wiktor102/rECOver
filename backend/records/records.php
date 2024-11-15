@@ -13,6 +13,7 @@ $router->addRoute("PUT", "/records", function () {
         if (count($inputJson["usedTransport"]) == 0 && count($inputJson["achievements"]) == 0) {
             $sql = "DELETE FROM `records` WHERE `user_id` = ? AND `date` = CURRENT_DATE();";
             $stmt->prepare($sql);
+            $stmt->bind_param("i", $userId);
             $stmt->execute();
             exit();
         }
@@ -36,10 +37,6 @@ $router->addRoute("PUT", "/records", function () {
         $conn->close();
     }
 });
-
-$queryString = [];
-$json = json_decode($input, true);
-parse_str($_SERVER["QUERY_STRING"], $queryString);
 
 $router->addRoute("GET", "/records", function () {
     global $credentials;
