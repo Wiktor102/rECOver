@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . "/../points.php";
+
 function getUserQuizes($userId, $onlyNewest = false) {
     $conn = connect();
     $stmt = $conn->stmt_init();
@@ -73,6 +75,21 @@ function getQuizQuestions($questionsIds) {
     }
 }
 
+function markQuizAsCompleted($quizId) {
+    $conn = connect();
+    $stmt = $conn->stmt_init();
+
+    try {
+        $sql = "UPDATE `quizes` SET `completed` = 1 WHERE `id` = ?;";
+        $stmt->prepare($sql);
+        $stmt->bind_param("i", $quizId);
+        $stmt->execute();
+    } finally {
+        $stmt->close();
+        $conn->close();
+    }
+}
+
 $router->addRoute("POST", "/quiz", function () {
     global $credentials;
 
@@ -138,10 +155,52 @@ $router->addRoute("GET", "/quiz", function () {
             exit();
         }
 
+        http_response_code(200);
         exit(json_encode([
             "quizId" => $quiz["id"],
             "completed" => $quiz["completed"],
             "questions" => getQuizQuestions($quiz['questions'])
+        ]));
+    } catch (Exception $e) {
+        error_log($e->getMessage());
+        http_response_code(500);
+    }
+});
+
+$router->addRoute("PATCH", "/quiz/check", function () {
+    global $credentials;
+    global $inputJson;
+
+    try {
+        $quiz = getUserQuizes($credentials["userId"], true);
+
+        $today = date('Y-m-d');
+        if ($quiz == null || $quiz['date'] !== $today) {
+            http_response_code(404);
+            exit();
+        }
+
+        $userAnswers = $inputJson['answers'];
+        $points = 0;
+
+        foreach ($userAnswers as $i => $userAnswer) {
+            $question = getQuizQuestions($quiz["questions"])[$i];
+            $correctAnswer = $question['answers']['options'][$question['answers']['correct_answer'] - 1];
+
+            if ($correctAnswer === $userAnswer) $points++;
+        }
+
+        if ($points == 0) $points = 1;
+        if ($points == 3) $points = 5;
+
+        // markQuizAsCompleted($quiz["id"]);
+        addPoints($credentials["userId"], $points);
+        $pointsTotal = getPoints($credentials["userId"]);
+
+        http_response_code(200);
+        exit(json_encode([
+            "points" => $points,
+            "totalPoints" => $pointsTotal
         ]));
     } catch (Exception $e) {
         error_log($e->getMessage());
