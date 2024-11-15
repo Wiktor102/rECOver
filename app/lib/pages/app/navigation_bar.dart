@@ -46,6 +46,12 @@ class AppBottomNavigationBar extends StatelessWidget {
               id: 3,
               selected: selectedIndex == 3,
               onTap: onItemTapped!,
+              icon: Symbols.group,
+            ),
+            _AppBottomNavigationBarItem(
+              id: 4,
+              selected: selectedIndex == 4,
+              onTap: onItemTapped!,
               icon: Symbols.settings,
             ),
           ],

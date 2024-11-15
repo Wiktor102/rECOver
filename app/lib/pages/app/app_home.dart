@@ -2,7 +2,9 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recover/models/user_data_model.dart';
+import 'package:recover/pages/app/challanges/challanges.dart';
 import 'package:recover/pages/app/error_screen.dart';
+import 'package:recover/pages/app/friends/friends.dart';
 import 'package:recover/pages/app/loading_screen.dart';
 import 'package:recover/pages/app/navigation_bar.dart';
 import 'package:recover/pages/app/quizes/quizes.dart';
@@ -24,7 +26,8 @@ class _AppHomeState extends State<AppHome> {
   static const List<Widget> _pages = <Widget>[
     Center(child: SingleChildScrollView(child: RecordsPage())),
     Center(child: QuizPage()),
-    Center(child: Text('Notifications Page')),
+    Center(child: ChallengesPage()),
+    Center(child: FriendsPage()),
     Center(child: Settings()),
   ];
 
