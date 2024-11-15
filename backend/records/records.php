@@ -6,8 +6,8 @@ $router->addRoute("PUT", "/records", function () {
     $conn = connect();
     $stmt = $conn->stmt_init();
     $userId = $credentials["userId"];
-    $usedTransport = json_encode($inputJson["usedTransport"]);
-    $achievements = json_encode($inputJson["achievements"]);
+    $usedTransport = $inputJson["usedTransport"] == null ? "[]" : json_encode($inputJson["usedTransport"]);
+    $achievements = $inputJson["achievements"] == null ? "[]" : json_encode($inputJson["achievements"]);
 
     try {
         if (count($inputJson["usedTransport"]) == 0 && count($inputJson["achievements"]) == 0) {
