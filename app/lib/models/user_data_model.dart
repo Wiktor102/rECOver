@@ -51,6 +51,7 @@ abstract class UserDataModel extends ChangeNotifier {
 
   Future<void> _loadTodayQuiz();
   Future<void> _initTodayQuiz();
+  Future<void> checkQuiz(List<int> answers);
 
   factory UserDataModel.create(AuthModel authModel) {
     if (authModel.localAccount) {
@@ -243,12 +244,12 @@ class OnlineUserDataModel extends UserDataModel {
       final http.Response response =
           await http.post(uri, headers: {"Authorization": "Bearer ${authModel.accessToken}"});
 
-      if (response.statusCode == 403) {
+      if (response.statusCode == 503) {
         todayQuiz = null;
         return;
       }
 
-      if (response.statusCode == 503) {
+      if (response.statusCode == 403) {
         await authModel.refreshAccessToken(null);
         _initTodayQuiz();
         return;
@@ -262,6 +263,47 @@ class OnlineUserDataModel extends UserDataModel {
         completed: (data["completed"] as int) == 1,
         questions: List<dynamic>.from(data["questions"]).map((element) => QuizQuestion.fromJson(element)).toList(),
       );
+    } catch (e) {
+      print(e);
+      throw Exception(e);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<int> checkQuiz(List<int> answers) async {
+    assert(todayQuiz != null);
+    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/quiz/check");
+    if (!kReleaseMode) {
+      uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/quiz/check");
+    }
+
+    try {
+      final http.Response response = await http.patch(
+        uri,
+        body: json.encode({
+          "answers": answers,
+        }),
+        headers: {
+          "Authorization": "Bearer ${authModel.accessToken}",
+          "Content-Type": "application/json",
+        },
+      );
+
+      if (response.statusCode == 403) {
+        await authModel.refreshAccessToken(null);
+        return checkQuiz(answers);
+      }
+
+      if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
+
+      print(response.body);
+      var data = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      points = data["totalPoints"];
+      todayQuiz!.completed = true;
+
+      return data["points"];
     } catch (e) {
       print(e);
       throw Exception(e);
@@ -310,6 +352,12 @@ class LocalUserDataModel extends UserDataModel {
   @override
   Future<void> _initTodayQuiz() {
     // TODO: implement _initTodayQuiz
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> checkQuiz(List<int> answers) {
+    // TODO: implement checkQuiz
     throw UnimplementedError();
   }
 }

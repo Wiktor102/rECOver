@@ -25,7 +25,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
             fill: 1,
             color: Theme.of(context).colorScheme.tertiary,
           ),
-          value: userData.mainStreak,
+          value: userData.points,
         ),
         _TopAppBarIndicator(
           icon: Icon(
@@ -34,7 +34,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
             fill: 1,
             color: Theme.of(context).colorScheme.error,
           ),
-          value: userData.points,
+          value: userData.mainStreak,
         ),
       ],
     );

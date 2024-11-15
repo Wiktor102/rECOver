@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:recover/models/auth_model.dart';
 import 'package:recover/models/user_data_model.dart';
 import 'package:recover/pages/app/app_home.dart';
+import 'package:recover/pages/app/quizes/quiz_test.dart';
+import 'package:recover/pages/app/quizes/quiz_test_result.dart';
 import 'package:recover/pages/home/home.dart';
 import 'package:recover/pages/home/login.dart';
 import 'package:recover/pages/home/signup.dart';
@@ -47,6 +49,16 @@ final _router = GoRouter(
           path: '/app/welcome',
           builder: (context, state) => const WelcomePage(),
         ),
+        GoRoute(
+          path: '/app/quiz',
+          builder: (context, state) => const QuizTestPage(),
+          routes: [
+            GoRoute(
+              path: "result",
+              builder: (context, state) => const QuizTestResult(),
+            ),
+          ],
+        ),
       ],
     )
   ],
@@ -62,7 +74,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         title: 'rECOver',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 11, 110, 27)),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0B6E1B)),
           useMaterial3: true,
         ),
         routerConfig: _router,

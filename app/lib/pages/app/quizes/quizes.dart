@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:recover/models/user_data_model.dart';
 
 class QuizPage extends StatelessWidget {
   const QuizPage({super.key});
+
+  void startQuiz(BuildContext context) {
+    context.push("/app/quiz");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +55,7 @@ class QuizPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           FilledButton.icon(
-            onPressed: () {},
+            onPressed: () => startQuiz(context),
             label: const Text("Rozpoczni quiz"),
             icon: const Icon(Icons.play_arrow),
             style: ButtonStyle(
