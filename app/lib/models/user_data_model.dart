@@ -26,20 +26,22 @@ abstract class UserDataModel extends ChangeNotifier {
 
     authModel = newAuthModel;
     notifyListeners();
-    _init();
+    init();
   }
 
   UserDataModel(this.authModel) {
-    _init();
+    init();
   }
 
-  void _init() {
+  void init() {
     if (!authModel.initialized || !authModel.loggedIn) {
       loadingFuture = Future.error(false);
       return;
     }
 
-    loadingFuture = Future.wait([_loadUserData(), _loadTodayRecords(), _loadTodayQuiz()]);
+    try {
+      loadingFuture = Future.wait([_loadUserData(), _loadTodayRecords(), _loadTodayQuiz()]);
+    } catch (e) {}
     notifyListeners();
   }
 

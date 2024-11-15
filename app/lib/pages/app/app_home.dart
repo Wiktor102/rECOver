@@ -2,6 +2,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recover/models/user_data_model.dart';
+import 'package:recover/pages/app/error_screen.dart';
+import 'package:recover/pages/app/loading_screen.dart';
 import 'package:recover/pages/app/navigation_bar.dart';
 import 'package:recover/pages/app/quizes/quizes.dart';
 import 'package:recover/pages/app/records/records.dart';
@@ -39,40 +41,42 @@ class _AppHomeState extends State<AppHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserDataModel>(
-      builder: (context, userData, child) {
-        return FutureBuilder(
-          future: userData.loadingFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+    return Scaffold(
+      body: Consumer<UserDataModel>(
+        builder: (context, userData, child) {
+          return FutureBuilder(
+            future: userData.loadingFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const LoadingScreen();
+              }
 
-            if (snapshot.hasError) {
-              return const Center(child: Text('Wystąpił błąd podczas ładowania danych'));
-            }
+              if (snapshot.hasError) {
+                return const ErrorScreen(buttonLabel: "Ponów próbę");
+              }
 
-            return Builder(builder: (context) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (userData.tags == null) context.go('/app/welcome');
+              return Builder(builder: (context) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (userData.tags == null) context.go('/app/welcome');
+                });
+                return child!;
               });
-              return child!;
-            });
-          },
-        );
-      },
-      child: Scaffold(
-        appBar: const TopAppBar(),
-        bottomNavigationBar: AppBottomNavigationBar(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-          child: PageView(
-            controller: _controller,
-            physics: const NeverScrollableScrollPhysics(),
-            children: _pages,
+            },
+          );
+        },
+        child: Scaffold(
+          appBar: const TopAppBar(),
+          bottomNavigationBar: AppBottomNavigationBar(
+            selectedIndex: _selectedIndex,
+            onItemTapped: _onItemTapped,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+            child: PageView(
+              controller: _controller,
+              physics: const NeverScrollableScrollPhysics(),
+              children: _pages,
+            ),
           ),
         ),
       ),

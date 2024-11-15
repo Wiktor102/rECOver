@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:recover/models/auth_model.dart';
 import 'package:recover/models/user_data_model.dart';
 import 'package:recover/pages/app/app_home.dart';
+import 'package:recover/pages/app/loading_screen.dart';
 import 'package:recover/pages/app/quizes/quiz_test.dart';
 import 'package:recover/pages/app/quizes/quiz_test_result.dart';
-import 'package:recover/pages/home/home.dart';
 import 'package:recover/pages/home/login.dart';
 import 'package:recover/pages/home/signup.dart';
 import 'package:recover/pages/app/welcome/welcome.dart';
@@ -16,11 +16,8 @@ void main() {
   runApp(const MyApp());
 }
 
-GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
 // GoRouter configuration
 final _router = GoRouter(
-  navigatorKey: navigatorKey,
   routes: [
     GoRoute(
       path: '/',
@@ -93,17 +90,16 @@ class AuthLoader extends StatefulWidget {
 class _AuthLoaderState extends State<AuthLoader> {
   @override
   void initState() {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AuthModel>(context, listen: false).init().then((_) {
-        if (!context.mounted) return;
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      var auth = Provider.of<AuthModel>(context, listen: false);
+      if (!auth.initialized) await auth.init();
+      if (!context.mounted) return;
 
-        var auth = Provider.of<AuthModel>(context, listen: false);
-        if (auth.loggedIn) {
-          context.go('/app');
-        } else {
-          context.go('/login');
-        }
-      });
+      if (auth.loggedIn) {
+        context.go('/app');
+      } else {
+        context.go('/login');
+      }
     });
 
     super.initState();
@@ -111,10 +107,6 @@ class _AuthLoaderState extends State<AuthLoader> {
 
   @override
   Widget build(BuildContext context) {
-    return const Home(children: [
-      Center(
-        child: CircularProgressIndicator(),
-      )
-    ]);
+    return const LoadingScreen();
   }
 }
