@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:recover/models/auth_model.dart';
+import 'package:go_router/go_router.dart';
 import 'package:recover/models/user_data_model.dart';
 import 'package:recover/pages/home/home.dart';
 
@@ -26,11 +28,23 @@ class ErrorScreen extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            FilledButton(
-              onPressed: () {
-                Provider.of<UserDataModel>(context, listen: false).init();
-              },
-              child: Text(buttonLabel),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FilledButton(
+                  onPressed: () {
+                    Provider.of<UserDataModel>(context, listen: false).init();
+                  },
+                  child: Text(buttonLabel),
+                ),
+                OutlinedButton(
+                  onPressed: () {
+                    Provider.of<AuthModel>(context, listen: false).logout();
+                    context.go("/login");
+                  },
+                  child: Text("Wyloguju się"),
+                ),
+              ],
             )
           ],
         ),
