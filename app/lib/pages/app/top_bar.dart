@@ -31,10 +31,10 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: Icon(
             Symbols.local_fire_department,
             size: 32,
-            fill: 1,
+            fill: userData.todayRecords == null ? 0 : 1,
             color: Theme.of(context).colorScheme.error,
           ),
-          value: userData.mainStreak,
+          value: userData.mainStreak + (userData.todayRecords == null ? 0 : 1),
         ),
       ],
     );
