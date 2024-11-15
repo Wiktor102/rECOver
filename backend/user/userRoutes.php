@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../calculateStreak.php';
+
 $router->addRoute("GET", "/user", function () {
     global $credentials;
     $userId = $credentials["userId"];
@@ -7,6 +9,9 @@ $router->addRoute("GET", "/user", function () {
     $stmt = $conn->stmt_init();
 
     try {
+        $streaks = calculateStreak($userId);
+        saveStreaks($streaks);
+
         $sql = "SELECT `id`, `email`, `nick`, `mainStreak`, `points`, `tags`, `streaks`, `quizQuestions` FROM `users` WHERE `id` = ?;";
         $stmt->prepare($sql);
         $stmt->bind_param("i", $userId);
