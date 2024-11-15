@@ -27,6 +27,10 @@ class _RecordsPageState extends State<RecordsPage> {
       applicableChallenges = challenges.where((element) {
         if (element.tags.isEmpty) return true;
         bool hasRequiredTags = element.tags.every((tag) {
+          if (userData.tags == null) {
+            return false;
+          }
+
           if (tag.startsWith('not-')) {
             return !userData.tags!.contains(tag.substring(4));
           } else {

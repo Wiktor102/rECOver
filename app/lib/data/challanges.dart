@@ -1,7 +1,7 @@
 List<Challenge> challenges = [
   Challenge(
     id: 1,
-    title: "Butelki PET",
+    title: "Bez butelki PET",
     description:
         "Jeśli dziś nie używałeś jednorazowej plastikowej butelki, gratulacje! Dzięki temu pomagasz zmniejszyć ilość plastiku w środowisku i chronisz naszą planetę.",
     tags: [],
@@ -10,7 +10,7 @@ List<Challenge> challenges = [
   ),
   Challenge(
     id: 2,
-    title: "Jedzenie Mięsa",
+    title: "Nie jedzenie Mięsa",
     description:
         "Produkcja mięsa mocno obciąża środowisko – spróbuj ograniczyć jego spożycie lub wyeliminować je całkowicie. To mały krok, który może zrobić dużą różnicę dla planety!",
     tags: ["not-vege"],
@@ -19,7 +19,7 @@ List<Challenge> challenges = [
   ),
   Challenge(
     id: 3,
-    title: "Używanie Suszarki",
+    title: "Nie używanie Suszarki",
     description:
         "Pozwól włosom wyschnąć naturalnie, to zdrowsze dla nich i pomaga oszczędzać energię, którą zużywa suszarka.",
     tags: [],

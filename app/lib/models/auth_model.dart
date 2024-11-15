@@ -30,8 +30,8 @@ class AuthModel extends ChangeNotifier {
 
   Future<String?> login(String username, String password) async {
     Stopwatch stopwatch = Stopwatch()..start();
-    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/auth/login");
-    if (!kReleaseMode) {
+    Uri uri = Uri.parse("https://api.recover.wiktorgolicz.pl/index.php/auth/login");
+    if (!kReleaseMode && false) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/auth/login");
     }
 
@@ -45,6 +45,7 @@ class AuthModel extends ChangeNotifier {
     try {
       final http.Response response =
           await http.post(uri, headers: {"Content-Type": "application/json"}, body: body);
+      print(response.body);
       if (![404, 200].contains(response.statusCode)) throw Exception(response.statusCode);
 
       if (response.statusCode == 404) {
@@ -113,8 +114,8 @@ class AuthModel extends ChangeNotifier {
   Future<void> refreshAccessToken(String? refreshToken) async {
     refreshToken ??= await _getRefreshToken();
 
-    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/auth/refreshToken");
-    if (!kReleaseMode) {
+    Uri uri = Uri.parse("https://api.recover.wiktorgolicz.pl/index.php/auth/refreshToken");
+    if (!kReleaseMode && false) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/auth/refreshToken");
     }
 

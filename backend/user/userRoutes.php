@@ -9,8 +9,13 @@ $router->addRoute("GET", "/user", function () {
     $stmt = $conn->stmt_init();
 
     try {
-        $streaks = calculateStreak($userId);
-        saveStreaks($streaks);
+        try {
+            $streaks = calculateStreak($userId);
+            saveStreaks($streaks);
+        } catch (Exception $e) {
+            echo json_encode(["error" => "Streaks: " . $e->getMessage()]);
+            return;
+        }
 
         $sql = "SELECT `id`, `email`, `nick`, `mainStreak`, `points`, `tags`, `streaks`, `quizQuestions` FROM `users` WHERE `id` = ?;";
         $stmt->prepare($sql);
@@ -38,7 +43,6 @@ $router->addRoute("GET", "/user", function () {
     } catch (Exception $e) {
         echo json_encode(["error" => $e->getMessage()]);
     } finally {
-        $stmt->close();
         $conn->close();
     }
 });

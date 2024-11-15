@@ -69,8 +69,8 @@ class OnlineUserDataModel extends UserDataModel {
 
   @override
   Future<void> _loadUserData() async {
-    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/user");
-    if (!kReleaseMode) {
+    Uri uri = Uri.parse("https://api.recover.wiktorgolicz.pl/index.php/user");
+    if (!kReleaseMode && false) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/user");
     }
 
@@ -87,11 +87,14 @@ class OnlineUserDataModel extends UserDataModel {
       if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
 
       Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      print(data);
       username = data["nick"];
       mainStreak = data["mainStreak"];
       points = data["points"];
 
-      tags = List<String>.from(data["tags"]);
+      print(data["tags"]);
+      tags = data["tags"] == null ? null : List<String>.from(data["tags"]);
+      print(data["tags"]);
     } catch (e) {
       print(e);
       throw Exception(e);
@@ -102,8 +105,8 @@ class OnlineUserDataModel extends UserDataModel {
 
   @override
   Future<void> updateTags(List<String> newTags) async {
-    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/user");
-    if (!kReleaseMode) {
+    Uri uri = Uri.parse("https://api.recover.wiktorgolicz.pl/index.php/user");
+    if (!kReleaseMode && false) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/user");
     }
 
@@ -116,7 +119,6 @@ class OnlineUserDataModel extends UserDataModel {
         "Authorization": "Bearer ${authModel.accessToken}",
         "Content-Type": "application/json",
       });
-      print(response.body);
       if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
 
       tags = newTags;
@@ -133,8 +135,8 @@ class OnlineUserDataModel extends UserDataModel {
     usedTransport ??= todayRecords?.usedTransport;
     otherRecords ??= todayRecords?.achievements;
 
-    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/records");
-    if (!kReleaseMode) {
+    Uri uri = Uri.parse("https://api.recover.wiktorgolicz.pl/index.php/records");
+    if (!kReleaseMode && false) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/records");
     }
 
@@ -166,8 +168,8 @@ class OnlineUserDataModel extends UserDataModel {
 
   @override
   Future<void> _loadTodayRecords() async {
-    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/records?date=today");
-    if (!kReleaseMode) {
+    Uri uri = Uri.parse("https://api.recover.wiktorgolicz.pl/index.php/records?date=today");
+    if (!kReleaseMode && false) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/records?date=today");
     }
 
@@ -198,8 +200,8 @@ class OnlineUserDataModel extends UserDataModel {
 
   @override
   Future<void> _loadTodayQuiz() async {
-    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/quiz");
-    if (!kReleaseMode) {
+    Uri uri = Uri.parse("https://api.recover.wiktorgolicz.pl/index.php/quiz");
+    if (!kReleaseMode && false) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/quiz");
     }
 
@@ -221,7 +223,7 @@ class OnlineUserDataModel extends UserDataModel {
       if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
 
       var data = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
-      print(data["quizId"]);
+
       todayQuiz = Quiz(
         id: data["quizId"] as int,
         completed: (data["completed"] as int) == 1,
@@ -237,8 +239,8 @@ class OnlineUserDataModel extends UserDataModel {
 
   @override
   Future<void> _initTodayQuiz() async {
-    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/quiz");
-    if (!kReleaseMode) {
+    Uri uri = Uri.parse("https://api.recover.wiktorgolicz.pl/index.php/quiz");
+    if (!kReleaseMode && false) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/quiz");
     }
 
@@ -276,8 +278,8 @@ class OnlineUserDataModel extends UserDataModel {
   @override
   Future<int> checkQuiz(List<int> answers) async {
     assert(todayQuiz != null);
-    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/quiz/check");
-    if (!kReleaseMode) {
+    Uri uri = Uri.parse("https://api.recover.wiktorgolicz.pl/index.php/quiz/check");
+    if (!kReleaseMode && false) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/quiz/check");
     }
 
@@ -300,7 +302,6 @@ class OnlineUserDataModel extends UserDataModel {
 
       if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
 
-      print(response.body);
       var data = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       points = data["totalPoints"];
       todayQuiz!.completed = true;

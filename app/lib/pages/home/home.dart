@@ -49,7 +49,7 @@ class Home extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(vertical: 30),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Theme.of(context).colorScheme.surface.withOpacity(0.7),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: SingleChildScrollView(

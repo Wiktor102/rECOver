@@ -86,8 +86,11 @@ function saveStreaks($streaks) {
             $stmt->execute();
         }
 
-        $sql = "UPDATE `users` SET `mainStreak` = 0 WHERE `id` NOT IN (" . implode(',', array_keys($streaks)) . ");";
-        $conn->query($sql);
+        if (count($streaks) > 0) {
+            $sql = "UPDATE `users` SET `mainStreak` = 0 WHERE `id` NOT IN (" . implode(',', array_keys($streaks)) . ");";
+            $conn->query($sql);
+        }
+
     } finally {
         $conn->close();
     }

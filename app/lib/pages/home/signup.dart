@@ -123,8 +123,8 @@ class _SignupFormState extends State<SignupForm> {
       "privacy": true // akceptacja polityki prywatności
     });
 
-    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/auth/signup");
-    if (!kReleaseMode) {
+    Uri uri = Uri.parse("https://api.recover.wiktorgolicz.pl/index.php/auth/signup");
+    if (!kReleaseMode && false) {
       uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/auth/signup");
     }
 

@@ -53,24 +53,24 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'lub ',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => useLocalAccount(context),
-                  child: const Text(
-                    'kontynuuj bez konta',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                )
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     Text(
+            //       'lub ',
+            //       style: TextStyle(
+            //         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+            //       ),
+            //     ),
+            //     TextButton(
+            //       onPressed: () => useLocalAccount(context),
+            //       child: const Text(
+            //         'kontynuuj bez konta',
+            //         style: TextStyle(fontWeight: FontWeight.w500),
+            //       ),
+            //     )
+            //   ],
+            // ),
           ],
         ),
       ),
