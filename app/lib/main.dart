@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recover/models/auth_model.dart';
+import 'package:recover/models/settings_model.dart';
 import 'package:recover/models/user_data_model.dart';
 import 'package:recover/pages/app/app_home.dart';
 import 'package:recover/pages/app/loading_screen.dart';
@@ -66,16 +67,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AuthModel(),
-      child: MaterialApp.router(
-        title: 'rECOver',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0B6E1B)),
-          useMaterial3: true,
-        ),
-        routerConfig: _router,
-      ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthModel()),
+        ChangeNotifierProvider(create: (context) => SettingsModel()),
+      ],
+      child: Consumer<SettingsModel>(builder: (context, settings, child) {
+        return MaterialApp.router(
+          title: 'rECOver',
+          theme: ThemeData(
+            brightness: settings.themeBrightness,
+            colorScheme:
+                ColorScheme.fromSeed(seedColor: const Color(0xFF0B6E1B), brightness: settings.themeBrightness),
+            useMaterial3: true,
+          ),
+          routerConfig: _router,
+        );
+      }),
     );
   }
 }

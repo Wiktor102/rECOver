@@ -86,6 +86,7 @@ class AuthModel extends ChangeNotifier {
 
   void logout() {
     accessToken = null;
+    _deleteRefreshToken();
     notifyListeners();
   }
 
@@ -98,6 +99,10 @@ class AuthModel extends ChangeNotifier {
   // tokens handling
   Future<void> _saveRefreshToken(String jwt) async {
     await secureStorage.write(key: 'RT', value: jwt);
+  }
+
+  Future<void> _deleteRefreshToken() async {
+    await secureStorage.delete(key: 'RT');
   }
 
   Future<String?> _getRefreshToken() async {
