@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:recover/data/quiz.dart';
+import 'package:recover/data/quiz_question.dart';
 import 'package:recover/models/auth_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,7 +12,8 @@ abstract class UserDataModel extends ChangeNotifier {
   int points = 0;
   List<String>? tags;
 
-  _Records todayRecords = _Records();
+  Records? todayRecords;
+  Quiz? todayQuiz;
 
   late Future<void> loadingFuture;
 
@@ -36,7 +39,7 @@ abstract class UserDataModel extends ChangeNotifier {
       return;
     }
 
-    loadingFuture = Future.wait([_loadUserData(), _loadTodayRecords()]);
+    loadingFuture = Future.wait([_loadUserData(), _loadTodayRecords(), _loadTodayQuiz()]);
     notifyListeners();
   }
 
@@ -45,6 +48,9 @@ abstract class UserDataModel extends ChangeNotifier {
 
   Future<void> saveRecords(List<String>? usedTransport, List<int>? otherRecords);
   Future<void> _loadTodayRecords();
+
+  Future<void> _loadTodayQuiz();
+  Future<void> _initTodayQuiz();
 
   factory UserDataModel.create(AuthModel authModel) {
     if (authModel.localAccount) {
@@ -68,6 +74,13 @@ class OnlineUserDataModel extends UserDataModel {
     try {
       final http.Response response =
           await http.get(uri, headers: {"Authorization": "Bearer ${authModel.accessToken}"});
+
+      if (response.statusCode == 403) {
+        await authModel.refreshAccessToken(null);
+        _loadTodayQuiz();
+        return;
+      }
+
       if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
 
       Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
@@ -76,8 +89,6 @@ class OnlineUserDataModel extends UserDataModel {
       points = data["points"];
 
       tags = List<String>.from(data["tags"]);
-
-      print(response.body);
     } catch (e) {
       print(e);
       throw Exception(e);
@@ -116,8 +127,8 @@ class OnlineUserDataModel extends UserDataModel {
 
   @override
   Future<void> saveRecords(List<String>? usedTransport, List<int>? otherRecords) async {
-    usedTransport ??= todayRecords.usedTransport;
-    otherRecords ??= todayRecords.achievements;
+    usedTransport ??= todayRecords?.usedTransport;
+    otherRecords ??= todayRecords?.achievements;
 
     Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/records");
     if (!kReleaseMode) {
@@ -141,8 +152,7 @@ class OnlineUserDataModel extends UserDataModel {
       }
 
       if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
-      todayRecords.usedTransport = usedTransport;
-      todayRecords.achievements = otherRecords;
+      todayRecords = Records(usedTransport: usedTransport ?? [], achievements: otherRecords ?? []);
     } catch (e) {
       print(e);
       throw Exception(e);
@@ -167,12 +177,90 @@ class OnlineUserDataModel extends UserDataModel {
         _loadTodayRecords();
       }
 
+      if (response.statusCode == 404) return;
       if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
 
       var data = jsonDecode(utf8.decode(response.bodyBytes)) as List<dynamic>;
-      todayRecords = _Records(
+      todayRecords = Records(
         usedTransport: List<String>.from(data[0]["usedTransport"]),
         achievements: List<int>.from(data[0]["achievements"]),
+      );
+    } catch (e) {
+      print(e);
+      throw Exception(e);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<void> _loadTodayQuiz() async {
+    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/quiz");
+    if (!kReleaseMode) {
+      uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/quiz");
+    }
+
+    try {
+      final http.Response response =
+          await http.get(uri, headers: {"Authorization": "Bearer ${authModel.accessToken}"});
+
+      if (response.statusCode == 404) {
+        await _initTodayQuiz();
+        return;
+      }
+
+      if (response.statusCode == 403) {
+        await authModel.refreshAccessToken(null);
+        _loadTodayQuiz();
+        return;
+      }
+
+      if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
+
+      var data = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      print(data["quizId"]);
+      todayQuiz = Quiz(
+        id: data["quizId"] as int,
+        completed: (data["completed"] as int) == 1,
+        questions: List<dynamic>.from(data["questions"]).map((element) => QuizQuestion.fromJson(element)).toList(),
+      );
+    } catch (e) {
+      print(e);
+      throw Exception(e);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<void> _initTodayQuiz() async {
+    Uri uri = Uri.parse("http://api.recover.wiktorgolicz.pl/index.php/quiz");
+    if (!kReleaseMode) {
+      uri = Uri.parse("http://10.0.2.2:3001/recover/index.php/quiz");
+    }
+
+    try {
+      final http.Response response =
+          await http.post(uri, headers: {"Authorization": "Bearer ${authModel.accessToken}"});
+
+      if (response.statusCode == 403) {
+        todayQuiz = null;
+        return;
+      }
+
+      if (response.statusCode == 503) {
+        await authModel.refreshAccessToken(null);
+        _initTodayQuiz();
+        return;
+      }
+
+      if (response.statusCode != 200) throw Exception("${response.statusCode}: ${response.body}");
+
+      var data = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      todayQuiz = Quiz(
+        id: data["quizId"] as int,
+        completed: (data["completed"] as int) == 1,
+        questions: List<dynamic>.from(data["questions"]).map((element) => QuizQuestion.fromJson(element)).toList(),
       );
     } catch (e) {
       print(e);
@@ -208,17 +296,29 @@ class LocalUserDataModel extends UserDataModel {
   }
 
   @override
-  Future<_Records> _loadTodayRecords() {
+  Future<Records> _loadTodayRecords() {
     // TODO: implement _loadTodayRecords
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> _loadTodayQuiz() {
+    // TODO: implement _loadTodayQuiz
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> _initTodayQuiz() {
+    // TODO: implement _initTodayQuiz
     throw UnimplementedError();
   }
 }
 
-class _Records {
+class Records {
   List<String> usedTransport = [];
   List<int> achievements = [];
 
-  _Records({
+  Records({
     this.usedTransport = const [],
     this.achievements = const [],
   });

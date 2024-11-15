@@ -37,7 +37,7 @@ class _RecordsPageState extends State<RecordsPage> {
         return hasRequiredTags;
       }).toList();
 
-      _selected = userData.todayRecords.achievements;
+      _selected = userData.todayRecords?.achievements ?? [];
     });
 
     super.initState();

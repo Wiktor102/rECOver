@@ -70,6 +70,12 @@ $router->addRoute("GET", "/records", function () {
 
         $stmt->execute();
         $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            http_response_code(404);
+            exit();
+        }
+
         $records = $result->fetch_all(MYSQLI_ASSOC);
 
         foreach ($records as &$record) {

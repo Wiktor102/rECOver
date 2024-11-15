@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recover/models/user_data_model.dart';
 import 'package:recover/pages/app/navigation_bar.dart';
+import 'package:recover/pages/app/quizes/quizes.dart';
 import 'package:recover/pages/app/records/records.dart';
 import 'package:recover/pages/app/settings/settings.dart';
 import 'package:recover/pages/app/top_bar.dart';
@@ -20,7 +21,7 @@ class _AppHomeState extends State<AppHome> {
   final PageController _controller = PageController();
   static const List<Widget> _pages = <Widget>[
     Center(child: SingleChildScrollView(child: RecordsPage())),
-    Center(child: Text('Search Page')),
+    Center(child: QuizPage()),
     Center(child: Text('Notifications Page')),
     Center(child: Settings()),
   ];

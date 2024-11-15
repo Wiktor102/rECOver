@@ -18,7 +18,7 @@ class _TransportSurveyState extends State<TransportSurvey> {
   @override
   void initState() {
     setState(() {
-      _selected = Provider.of<UserDataModel>(context, listen: false).todayRecords.usedTransport;
+      _selected = Provider.of<UserDataModel>(context, listen: false).todayRecords?.usedTransport ?? [];
     });
 
     super.initState();
