@@ -1,10 +1,10 @@
 <?php
 require_once 'connect.php';
 
-// if(php_sapi_name() != 'cli'){
-//     http_response_code(403);
-//     return;
-// }
+if(php_sapi_name() != 'cli'){
+    http_response_code(403);
+    return;
+}
 
 $conn = connect();
 $stmt = $conn->stmt_init();
